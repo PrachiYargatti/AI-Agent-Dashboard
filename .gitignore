@@ -1,16 +1,17 @@
-# Python
-backend/venv/
-__pycache__/
-*.pyc
-
-# Environment variables
+# Environment files
 .env
 backend/.env
+
+# Python
+__pycache__/
+*.pyc
+venv/
+backend/venv/
 
 # Node
 node_modules/
 dist/
 
-# OS files
+# OS
 .DS_Store
 Thumbs.db
