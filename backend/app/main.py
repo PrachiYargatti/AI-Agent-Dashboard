@@ -16,7 +16,10 @@ app = FastAPI(title="AI Agent Dashboard")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://ai-agent-dashboard-eta-fawn.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -73,13 +76,11 @@ def get_weather(city: str = "Pune"):
         }
 
 @app.get("/github")
-def get_github_activity():
+def get_github_activity(
+    username: str = "octocat"
+):
 
     try:
-
-        username = os.getenv(
-            "GITHUB_USERNAME"
-        )
 
         url = (
             f"https://api.github.com/users/"
@@ -87,6 +88,13 @@ def get_github_activity():
         )
 
         response = requests.get(url)
+
+        if response.status_code != 200:
+
+            return {
+                "error":
+                "GitHub user not found"
+            }
 
         events = response.json()
 
@@ -113,7 +121,7 @@ def get_github_activity():
             "error":
             "Unable to fetch GitHub activity"
         }
-
+        
 @app.get("/news")
 def get_news():
 
