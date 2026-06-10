@@ -1,6 +1,16 @@
-venv/
+# Python
+backend/venv/
 __pycache__/
+*.pyc
+
+# Environment variables
 .env
+backend/.env
+
+# Node
 node_modules/
 dist/
-*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db
