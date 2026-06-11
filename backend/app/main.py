@@ -76,52 +76,35 @@ def get_weather(city: str = "Pune"):
         }
 
 @app.get("/github")
-def get_github_activity(
-    username: str = "octocat"
-):
+def get_github_activity(username: str = "octocat"):
 
     try:
 
-        url = (
-            f"https://api.github.com/users/"
-            f"{username}/events"
-        )
+        url = f"https://api.github.com/users/{username}"
 
-        response = requests.get(url)
+        user_response = requests.get(url)
 
-        if response.status_code != 200:
+        if user_response.status_code != 200:
 
             return {
-                "error":
-                "GitHub user not found"
+                "error": f"User '{username}' not found"
             }
 
-        events = response.json()
-
-        activities = []
-
-        for event in events[:5]:
-
-            activities.append({
-
-                "type":
-                event.get("type"),
-
-                "repo":
-                event.get(
-                    "repo",
-                    {}
-                ).get("name")
-
-            })
-
-        return activities
-
-    except Exception:
+        user_data = user_response.json()
 
         return {
-            "error":
-            "Unable to fetch GitHub activity"
+            "username": user_data.get("login"),
+            "name": user_data.get("name"),
+            "followers": user_data.get("followers"),
+            "following": user_data.get("following"),
+            "public_repos": user_data.get("public_repos"),
+            "profile_url": user_data.get("html_url")
+        }
+
+    except Exception as e:
+
+        return {
+            "error": str(e)
         }
         
 @app.get("/news")
