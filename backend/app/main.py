@@ -104,9 +104,11 @@ def get_github_activity(
 
             activities.append({
 
-                "type": event.get("type"),
+                "type":
+                event.get("type"),
 
-                "repo": event.get(
+                "repo":
+                event.get(
                     "repo",
                     {}
                 ).get("name")

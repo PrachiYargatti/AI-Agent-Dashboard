@@ -3,8 +3,34 @@ import api from "../services/api";
 
 function Github() {
 
-  const [events, setEvents] =
-    useState([]);
+  const [activities, setActivities] = useState([]);
+  const [username, setUsername] = useState("octocat");
+  const [loading, setLoading] = useState(false);
+
+  const fetchGithub = async () => {
+
+    try {
+
+      setLoading(true);
+
+      const response = await api.get(
+        `/github?username=${username}`
+      );
+
+      setActivities(response.data);
+
+    } catch (error) {
+
+      console.error(error);
+
+      setActivities([]);
+
+    } finally {
+
+      setLoading(false);
+
+    }
+  };
 
   useEffect(() => {
 
@@ -12,61 +38,84 @@ function Github() {
 
   }, []);
 
-  const fetchGithub = async () => {
-
-    try {
-
-      const response =
-        await api.get("/github");
-
-      setEvents(
-        response.data
-      );
-
-    } catch (error) {
-
-      console.error(error);
-    }
-  };
-
   return (
 
     <div className="card">
 
-      <h2>💻 GitHub Activity</h2>
+      <h2>
+        GitHub Activity
+      </h2>
 
-      {
-        events.length === 0
-        ? (
-            <p>
-              Loading Activity...
-            </p>
-          )
-        : (
-            events.map(
-              (event,index) => (
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          marginBottom: "15px"
+        }}
+      >
 
-                <div
-                  key={index}
-                  className="github-item"
-                >
-
-                  <h4>
-                    {event.type}
-                  </h4>
-
-                  <p>
-                    {event.repo}
-                  </p>
-
-                </div>
-
-              )
+        <input
+          type="text"
+          placeholder="Enter GitHub username"
+          value={username}
+          onChange={(e) =>
+            setUsername(
+              e.target.value
             )
+          }
+        />
+
+        <button
+          onClick={fetchGithub}
+        >
+          Search
+        </button>
+
+      </div>
+
+      {loading ? (
+
+        <p>
+          Loading activity...
+        </p>
+
+      ) : activities.error ? (
+
+        <p>
+          {activities.error}
+        </p>
+
+      ) : (
+
+        activities.map(
+          (activity, index) => (
+
+            <div
+              key={index}
+              style={{
+                marginBottom: "10px"
+              }}
+            >
+
+              <strong>
+                {activity.type}
+              </strong>
+
+              <br />
+
+              <span>
+                {activity.repo}
+              </span>
+
+            </div>
+
           )
-      }
+        )
+
+      )}
 
     </div>
+
   );
 }
 
