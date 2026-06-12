@@ -82,23 +82,11 @@ def get_github_activity(username: str = "octocat"):
 
         url = f"https://api.github.com/users/{username}"
 
-        user_response = requests.get(url)
-
-        if user_response.status_code != 200:
-
-            return {
-                "error": f"User '{username}' not found"
-            }
-
-        user_data = user_response.json()
+        response = requests.get(url)
 
         return {
-            "username": user_data.get("login"),
-            "name": user_data.get("name"),
-            "followers": user_data.get("followers"),
-            "following": user_data.get("following"),
-            "public_repos": user_data.get("public_repos"),
-            "profile_url": user_data.get("html_url")
+            "status_code": response.status_code,
+            "response": response.json()
         }
 
     except Exception as e:
