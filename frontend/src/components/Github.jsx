@@ -17,7 +17,15 @@ function Github() {
         `/github?username=${username}`
       );
 
-      setActivities(response.data);
+      if (Array.isArray(response.data)) {
+
+        setActivities(response.data);
+
+      } else {
+
+        setActivities([]);
+
+      }
 
     } catch (error) {
 
@@ -42,9 +50,7 @@ function Github() {
 
     <div className="card">
 
-      <h2>
-        GitHub Activity
-      </h2>
+      <h2>GitHub Activity</h2>
 
       <div
         style={{
@@ -56,12 +62,10 @@ function Github() {
 
         <input
           type="text"
-          placeholder="Enter GitHub username"
+          placeholder="GitHub Username"
           value={username}
           onChange={(e) =>
-            setUsername(
-              e.target.value
-            )
+            setUsername(e.target.value)
           }
         />
 
@@ -75,47 +79,40 @@ function Github() {
 
       {loading ? (
 
-        <p>
-          Loading activity...
-        </p>
+        <p>Loading activity...</p>
 
-      ) : activities.error ? (
+      ) : activities.length === 0 ? (
 
-        <p>
-          {activities.error}
-        </p>
+        <p>No recent public activity found.</p>
 
       ) : (
 
-        activities.map(
-          (activity, index) => (
+        activities.map((activity, index) => (
 
-            <div
-              key={index}
-              style={{
-                marginBottom: "10px"
-              }}
-            >
+          <div
+            key={index}
+            style={{
+              marginBottom: "12px"
+            }}
+          >
 
-              <strong>
-                {activity.type}
-              </strong>
+            <strong>
+              {activity.type}
+            </strong>
 
-              <br />
+            <br />
 
-              <span>
-                {activity.repo}
-              </span>
+            <span>
+              {activity.repo}
+            </span>
 
-            </div>
+          </div>
 
-          )
-        )
+        ))
 
       )}
 
     </div>
-
   );
 }
 

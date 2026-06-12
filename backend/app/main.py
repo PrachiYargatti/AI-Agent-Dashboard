@@ -80,20 +80,41 @@ def get_github_activity(username: str = "octocat"):
 
     try:
 
-        url = f"https://api.github.com/users/{username}"
+        url = (
+            f"https://api.github.com/users/"
+            f"{username}/events/public"
+        )
 
         response = requests.get(url)
 
-        return {
-            "status_code": response.status_code,
-            "response": response.json()
-        }
+        if response.status_code != 200:
 
-    except Exception as e:
+            return []
 
-        return {
-            "error": str(e)
-        }
+        events = response.json()
+
+        activities = []
+
+        for event in events[:5]:
+
+            activities.append({
+
+                "type":
+                event.get("type"),
+
+                "repo":
+                event.get(
+                    "repo",
+                    {}
+                ).get("name")
+
+            })
+
+        return activities
+
+    except Exception:
+
+        return []
         
 @app.get("/news")
 def get_news():
