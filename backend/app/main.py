@@ -3,12 +3,11 @@ import requests
 
 from dotenv import load_dotenv
 from bson import ObjectId
-from app.database.connection import tasks_collection
-from app.services.agent_service import route_query
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.services.gemini_service import ask_gemini
-from app.routes.weather import router as weather_router
+
+from app.database.connection import tasks_collection
+from app.services.agent_service import route_query
 
 load_dotenv()
 
@@ -25,11 +24,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/")
 def home():
     return {
         "message": "Backend Running Successfully"
     }
+
+
+# ==========================
+# WEATHER
+# ==========================
 
 @app.get("/weather")
 def get_weather(city: str = "Pune"):
@@ -45,7 +50,7 @@ def get_weather(city: str = "Pune"):
             f"&units=metric"
         )
 
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
 
         data = response.json()
 
@@ -75,6 +80,11 @@ def get_weather(city: str = "Pune"):
             "error": "Unable to fetch weather data"
         }
 
+
+# ==========================
+# GITHUB
+# ==========================
+
 @app.get("/github")
 def get_github_activity(username: str = "octocat"):
 
@@ -87,9 +97,10 @@ def get_github_activity(username: str = "octocat"):
             f"{username}/events/public"
         )
 
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
 
         if response.status_code != 200:
+
             return []
 
         events = response.json()
@@ -99,15 +110,27 @@ def get_github_activity(username: str = "octocat"):
         for event in events[:5]:
 
             activities.append({
+
                 "type": event.get("type"),
-                "repo": event.get("repo", {}).get("name")
+
+                "repo": event.get(
+                    "repo",
+                    {}
+                ).get("name")
+
             })
 
         return activities
 
     except Exception:
+
         return []
-        
+
+
+# ==========================
+# NEWS
+# ==========================
+
 @app.get("/news")
 def get_news():
 
@@ -123,7 +146,7 @@ def get_news():
             f"&apiKey={api_key}"
         )
 
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
 
         data = response.json()
 
@@ -132,25 +155,35 @@ def get_news():
         for article in data.get("articles", []):
 
             news.append({
+
                 "title": article.get("title"),
-                "source": article.get("source", {}).get("name"),
+
+                "source": article.get(
+                    "source",
+                    {}
+                ).get("name"),
+
                 "url": article.get("url")
+
             })
 
         return news
 
     except Exception:
 
-        return {
-            "error": "Unable to fetch news"
-        }
+        return []
+
+
+# ==========================
+# AI AGENT
+# ==========================
 
 @app.post("/agent")
 def agent(data: dict):
 
     try:
 
-        query = data.get("query")
+        query = data.get("query", "")
 
         response = route_query(query)
 
@@ -158,12 +191,16 @@ def agent(data: dict):
             "response": response
         }
 
-    except Exception:
+    except Exception as e:
 
         return {
-            "response":
-            "Agent is currently unavailable."
+            "response": f"Agent Error: {str(e)}"
         }
+
+
+# ==========================
+# TASKS
+# ==========================
 
 @app.get("/tasks")
 def get_tasks():
@@ -182,11 +219,9 @@ def get_tasks():
 
     except Exception:
 
-        return {
-            "error":
-            "Unable to fetch tasks"
-        }
-    
+        return []
+
+
 @app.post("/tasks")
 def add_task(task: dict):
 
@@ -195,17 +230,16 @@ def add_task(task: dict):
         tasks_collection.insert_one(task)
 
         return {
-            "message":
-            "Task Added Successfully"
+            "message": "Task Added Successfully"
         }
 
-    except Exception:
+    except Exception as e:
 
         return {
-            "error":
-            "Unable to add task"
+            "error": str(e)
         }
-    
+
+
 @app.delete("/tasks/{task_id}")
 def delete_task(task_id: str):
 
@@ -216,13 +250,11 @@ def delete_task(task_id: str):
         )
 
         return {
-            "message":
-            "Task Deleted Successfully"
+            "message": "Task Deleted Successfully"
         }
 
-    except Exception:
+    except Exception as e:
 
         return {
-            "error":
-            "Unable to delete task"
+            "error": str(e)
         }
