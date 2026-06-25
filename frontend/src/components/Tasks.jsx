@@ -13,11 +13,26 @@ function Tasks() {
 
       const response = await api.get("/tasks");
 
-      setTasks(response.data);
+      console.log("Tasks:", response.data);
+
+      if (Array.isArray(response.data)) {
+
+        const validTasks = response.data.filter(
+          (task) => task.title
+        );
+
+        setTasks(validTasks);
+
+      } else {
+
+        setTasks([]);
+      }
 
     } catch (error) {
 
-      console.error(error);
+      console.error("Fetch Tasks Error:", error);
+
+      setTasks([]);
     }
   };
 
@@ -36,17 +51,17 @@ function Tasks() {
       setLoading(true);
 
       await api.post("/tasks", {
-        title,
+        title: title,
         status: "Pending"
       });
 
       setTitle("");
 
-      fetchTasks();
+      await fetchTasks();
 
     } catch (error) {
 
-      console.error(error);
+      console.error("Add Task Error:", error);
 
     } finally {
 
@@ -60,11 +75,11 @@ function Tasks() {
 
       await api.delete(`/tasks/${id}`);
 
-      fetchTasks();
+      await fetchTasks();
 
     } catch (error) {
 
-      console.error(error);
+      console.error("Delete Task Error:", error);
     }
   };
 
@@ -87,38 +102,72 @@ function Tasks() {
           onChange={(e) =>
             setTitle(e.target.value)
           }
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              addTask();
+            }
+          }}
         />
 
         <button
           className="primary-btn"
           onClick={addTask}
+          disabled={loading}
         >
-          Add
+          {loading ? "Adding..." : "Add"}
         </button>
 
       </div>
 
-      {loading && (
-        <p className="loading-text">
-          Adding task...
-        </p>
-      )}
-
       <div className="tasks-list">
 
-        {
-          Array.isArray(tasks) && tasks.length > 0
-            ? tasks.map((task) => (
+        {tasks.length === 0 ? (
 
-                <div
-                  key={task._id}
-                >
-                  {task.title}
-                </div>
+          <p>No tasks found</p>
 
-              ))
-            : <p>No tasks found</p>
-        }
+        ) : (
+
+          tasks.map((task) => (
+
+            <div
+              key={task._id}
+              className="task-item"
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "10px",
+                marginBottom: "10px",
+                borderRadius: "8px",
+                background: "#0f172a"
+              }}
+            >
+
+              <span>
+                {task.title}
+              </span>
+
+              <button
+                onClick={() =>
+                  deleteTask(task._id)
+                }
+                style={{
+                  background: "#ef4444",
+                  color: "white",
+                  border: "none",
+                  padding: "6px 12px",
+                  borderRadius: "6px",
+                  cursor: "pointer"
+                }}
+              >
+                Delete
+              </button>
+
+            </div>
+
+          ))
+
+        )}
 
       </div>
 

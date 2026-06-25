@@ -183,7 +183,7 @@ def agent(data: dict):
 
     try:
 
-        query = data.get("query", "")
+        query = data.get("query")
 
         response = route_query(query)
 
@@ -194,7 +194,7 @@ def agent(data: dict):
     except Exception as e:
 
         return {
-            "response": f"Agent Error: {str(e)}"
+            "response": str(e)
         }
 
 

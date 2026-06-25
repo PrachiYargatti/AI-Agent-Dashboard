@@ -38,14 +38,20 @@ function News() {
           Array.isArray(news) && news.length > 0
             ? news.map((item, index) => (
 
-                <div key={index}>
+                <div
+                  key={index}
+                  className="news-item"
+                >
+
                   <a
                     href={item.url}
                     target="_blank"
                     rel="noreferrer"
+                    className="news-link"
                   >
                     {item.title}
                   </a>
+
                 </div>
 
               ))

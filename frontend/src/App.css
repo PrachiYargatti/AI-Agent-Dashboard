@@ -373,3 +373,17 @@ input {
 
   margin: 10px 0;
 }
+
+.news-link {
+  color: white;
+  text-decoration: none;
+}
+
+.news-link:hover {
+  color: #e5e5e5;
+  text-decoration: underline;
+}
+
+.news-item {
+  margin-bottom: 10px;
+}

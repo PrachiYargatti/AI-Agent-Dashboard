@@ -1,6 +1,6 @@
+import os
 import google.generativeai as genai
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
@@ -9,13 +9,21 @@ genai.configure(
 )
 
 model = genai.GenerativeModel(
-    "gemini-2.5-flash"
+    "models/gemini-2.5-flash"
 )
 
 def ask_gemini(prompt):
 
-    response = model.generate_content(
-        prompt
-    )
+    try:
 
-    return response.text
+        response = model.generate_content(
+            prompt
+        )
+
+        return response.text
+
+    except Exception as e:
+
+        print("Gemini Error:", str(e))
+
+        return f"Gemini Error: {str(e)}"
