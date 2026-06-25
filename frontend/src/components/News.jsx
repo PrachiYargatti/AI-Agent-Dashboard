@@ -35,38 +35,21 @@ function News() {
       <div className="news-container">
 
         {
-          news.length === 0
-          ? (
-              <p>
-                Loading News...
-              </p>
-            )
-          : (
-              news.map(
-                (item, index) => (
+          Array.isArray(news) && news.length > 0
+            ? news.map((item, index) => (
 
-                  <div
-                    className="news-item"
-                    key={index}
+                <div key={index}>
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noreferrer"
                   >
+                    {item.title}
+                  </a>
+                </div>
 
-                    <a
-                      href={item.url}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {item.title}
-                    </a>
-
-                    <p>
-                      {item.source}
-                    </p>
-
-                  </div>
-
-                )
-              )
-            )
+              ))
+            : <p>No news available</p>
         }
 
       </div>

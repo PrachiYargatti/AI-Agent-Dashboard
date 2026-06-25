@@ -78,6 +78,8 @@ def get_weather(city: str = "Pune"):
 @app.get("/github")
 def get_github_activity(username: str = "octocat"):
 
+    username = username.strip("'").strip('"')
+
     try:
 
         url = (
@@ -88,7 +90,6 @@ def get_github_activity(username: str = "octocat"):
         response = requests.get(url)
 
         if response.status_code != 200:
-
             return []
 
         events = response.json()
@@ -98,22 +99,13 @@ def get_github_activity(username: str = "octocat"):
         for event in events[:5]:
 
             activities.append({
-
-                "type":
-                event.get("type"),
-
-                "repo":
-                event.get(
-                    "repo",
-                    {}
-                ).get("name")
-
+                "type": event.get("type"),
+                "repo": event.get("repo", {}).get("name")
             })
 
         return activities
 
     except Exception:
-
         return []
         
 @app.get("/news")

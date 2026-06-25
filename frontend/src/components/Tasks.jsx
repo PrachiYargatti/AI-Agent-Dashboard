@@ -106,38 +106,19 @@ function Tasks() {
 
       <div className="tasks-list">
 
-        {tasks.length === 0 ? (
+        {
+          Array.isArray(tasks) && tasks.length > 0
+            ? tasks.map((task) => (
 
-          <p className="empty-state">
-            No tasks yet
-          </p>
+                <div
+                  key={task._id}
+                >
+                  {task.title}
+                </div>
 
-        ) : (
-
-          tasks.map((task) => (
-
-            <div
-              className="task-item"
-              key={task._id}
-            >
-
-              <span>
-                {task.title}
-              </span>
-
-              <button
-                className="delete-btn"
-                onClick={() =>
-                  deleteTask(task._id)
-                }
-              >
-                Delete
-              </button>
-
-            </div>
-
-          ))
-        )}
+              ))
+            : <p>No tasks found</p>
+        }
 
       </div>
 

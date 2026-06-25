@@ -50,40 +50,30 @@ function Github() {
 
     <div className="card">
 
-      <h2>GitHub Activity</h2>
+      <h2>💻 GitHub Activity</h2>
 
-      <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          marginBottom: "15px"
-        }}
+      <input
+        type="text"
+        value={username}
+        onChange={(e) =>
+          setUsername(e.target.value)
+        }
+        placeholder="GitHub username"
+      />
+
+      <button
+        onClick={fetchGithub}
       >
-
-        <input
-          type="text"
-          placeholder="GitHub Username"
-          value={username}
-          onChange={(e) =>
-            setUsername(e.target.value)
-          }
-        />
-
-        <button
-          onClick={fetchGithub}
-        >
-          Search
-        </button>
-
-      </div>
+        Search
+      </button>
 
       {loading ? (
 
-        <p>Loading activity...</p>
+        <p>Loading...</p>
 
       ) : activities.length === 0 ? (
 
-        <p>No recent public activity found.</p>
+        <p>No activity found</p>
 
       ) : (
 
@@ -91,21 +81,14 @@ function Github() {
 
           <div
             key={index}
-            style={{
-              marginBottom: "12px"
-            }}
           >
-
             <strong>
               {activity.type}
             </strong>
 
             <br />
 
-            <span>
-              {activity.repo}
-            </span>
-
+            {activity.repo}
           </div>
 
         ))
